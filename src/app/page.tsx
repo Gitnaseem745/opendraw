@@ -1,7 +1,7 @@
 'use client';
 import { DrawingCanvas } from "@/components/Canvas";
 import { TextEditor } from "@/components/TextEditor";
-import { ToolPanel, ObjectControls } from "@/components/Tools";
+import { ToolPanel, ShapePropertiesSidebar } from "@/components/Tools";
 import { StatusBar } from "@/components/status";
 import { useKeyboardShortcuts, useWheelEvents } from "@/hooks";
 
@@ -13,9 +13,7 @@ export default function Home() {
     return (
         <div className="w-screen h-screen overflow-hidden relative bg-background">
             <ToolPanel />
-            <div className="absolute top-2 left-2 z-10 max-md:hidden">
-                <ObjectControls />
-            </div>
+            <ShapePropertiesSidebar />
             <StatusBar />
             <TextEditor />
             <DrawingCanvas />

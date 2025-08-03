@@ -23,8 +23,7 @@ import {
   Group, 
   Ungroup, 
   ChevronUp, 
-  ChevronDown, 
-  Layers3 
+  ChevronDown
 } from 'lucide-react';
 
 /**
@@ -93,15 +92,11 @@ export const ObjectControls = () => {
   };
 
   return (
-    <div className="flex flex-col gap-2 p-2 bg-background/90 backdrop-blur-sm border border-border rounded-lg shadow-lg">
-      <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
-        <Layers3 size={12} />
-        <span>Object Controls</span>
-      </div>
-      
-      <div className="flex gap-1">
-        {/* Grouping Controls */}
-        <div className="flex gap-1 p-1 bg-muted/50 rounded">
+    <div className="space-y-4">
+      {/* Grouping Controls */}
+      <div className="space-y-2">
+        <div className="text-xs font-medium text-muted-foreground">Grouping</div>
+        <div className="flex gap-2 p-3 bg-muted/30 rounded-lg">
           <ToolButton
             isActive={false}
             onClick={handleGroup}
@@ -120,10 +115,13 @@ export const ObjectControls = () => {
             <Ungroup size={16} />
           </ToolButton>
         </div>
+      </div>
 
-        {/* Layer Management Controls */}
-        {canManageLayers && (
-          <div className="flex gap-1 p-1 bg-muted/50 rounded">
+      {/* Layer Management Controls */}
+      {canManageLayers && (
+        <div className="space-y-2">
+          <div className="text-xs font-medium text-muted-foreground">Layers</div>
+          <div className="flex gap-2 p-3 bg-muted/30 rounded-lg">
             <ToolButton
               isActive={false}
               onClick={handleBringForward}
@@ -140,11 +138,11 @@ export const ObjectControls = () => {
               <ChevronDown size={16} />
             </ToolButton>
           </div>
-        )}
-      </div>
+        </div>
+      )}
       
       {/* Selection Info */}
-      <div className="text-xs text-muted-foreground border-t border-border pt-2">
+      <div className="text-xs text-muted-foreground p-3 bg-muted/20 rounded-lg border border-border/50">
         {selectedShapes.length === 1 ? (
           <span>1 shape selected</span>
         ) : (

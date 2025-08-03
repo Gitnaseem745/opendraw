@@ -56,13 +56,14 @@ export const StrokeControls = () => {
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="space-y-4">
       {/* Stroke Color Section */}
-      <div className="flex gap-1 p-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg shadow-lg">
-        <div className="flex items-center gap-1">
+      <div className="space-y-2">
+        <div className="text-xs font-medium text-muted-foreground">Stroke</div>
+        <div className="flex flex-wrap gap-2 p-3 bg-muted/30 rounded-lg">
           {/* Current stroke color indicator */}
           <div 
-            className="w-6 h-6 rounded border border-border cursor-pointer flex-shrink-0"
+            className="w-8 h-8 rounded border-2 border-border cursor-pointer flex-shrink-0"
             style={{ backgroundColor: strokeColor }}
             title={`Current stroke: ${strokeColor}`}
           />
@@ -71,8 +72,8 @@ export const StrokeControls = () => {
             <button
               key={`stroke-${color}`}
               onClick={() => setStrokeColor(color)}
-              className={`w-5 h-5 rounded border cursor-pointer hover:scale-110 transition-transform ${
-                strokeColor === color ? 'ring-1 ring-ring' : 'border-border/50'
+              className={`w-6 h-6 rounded border cursor-pointer hover:scale-110 transition-transform ${
+                strokeColor === color ? 'ring-2 ring-ring ring-offset-1' : 'border-border/50'
               }`}
               style={{ backgroundColor: color }}
               title={`Set stroke to ${color}`}
@@ -83,10 +84,11 @@ export const StrokeControls = () => {
       </div>
 
       {/* Fill Color Section */}
-      <div className="flex gap-1 p-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg shadow-lg">
-        <div className="flex items-center gap-1">
+      <div className="space-y-2">
+        <div className="text-xs font-medium text-muted-foreground">Fill</div>
+        <div className="flex flex-wrap gap-2 p-3 bg-muted/30 rounded-lg">
           {/* Current fill color indicator or no-fill indicator */}
-          <div className="relative w-6 h-6 rounded border border-border cursor-pointer flex-shrink-0">
+          <div className="relative w-8 h-8 rounded border-2 border-border cursor-pointer flex-shrink-0">
             <div 
               className="w-full h-full rounded"
               style={{ 
@@ -100,7 +102,7 @@ export const StrokeControls = () => {
               title={fillColor === 'transparent' ? 'No fill' : `Current fill: ${fillColor}`}
             />
             {fillColor === 'transparent' && (
-              <X size={12} className="absolute inset-0 m-auto text-red-500" />
+              <X size={14} className="absolute inset-0 m-auto text-red-500" />
             )}
           </div>
           
@@ -118,8 +120,8 @@ export const StrokeControls = () => {
             <button
               key={`fill-${color}`}
               onClick={() => setFillColor(color)}
-              className={`w-5 h-5 rounded border cursor-pointer hover:scale-110 transition-transform ${
-                fillColor === color ? 'ring-1 ring-ring' : 'border-border/50'
+              className={`w-6 h-6 rounded border cursor-pointer hover:scale-110 transition-transform ${
+                fillColor === color ? 'ring-2 ring-ring ring-offset-1' : 'border-border/50'
               }`}
               style={{ backgroundColor: color }}
               title={`Set fill to ${color}`}
@@ -130,8 +132,9 @@ export const StrokeControls = () => {
       </div>
 
       {/* Stroke Width Section */}
-      <div className="flex gap-1 p-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg shadow-lg">
-        <div className="flex items-center gap-1">
+      <div className="space-y-2">
+        <div className="text-xs font-medium text-muted-foreground">Width</div>
+        <div className="flex items-center gap-2 p-3 bg-muted/30 rounded-lg">
           <ToolButton
             isActive={false}
             onClick={() => adjustStrokeWidth(-1)}
@@ -142,12 +145,12 @@ export const StrokeControls = () => {
           </ToolButton>
           
           {/* Width preview */}
-          <div className="flex items-center justify-center w-8 h-8 bg-muted/50 rounded border border-border">
+          <div className="flex items-center justify-center w-10 h-10 bg-background/50 rounded border border-border">
             <div 
               className="rounded-full bg-foreground"
               style={{ 
-                width: `${Math.max(Math.min(strokeWidth * 2, 16), 2)}px`, 
-                height: `${Math.max(Math.min(strokeWidth * 2, 16), 2)}px` 
+                width: `${Math.max(Math.min(strokeWidth * 2, 20), 2)}px`, 
+                height: `${Math.max(Math.min(strokeWidth * 2, 20), 2)}px` 
               }}
               title={`Width: ${strokeWidth}px`}
             />
@@ -163,8 +166,8 @@ export const StrokeControls = () => {
           </ToolButton>
           
           {/* Width value indicator */}
-          <div className="px-2 py-1 bg-muted/50 rounded border border-border text-xs font-mono min-w-[2.5rem] text-center">
-            {strokeWidth}
+          <div className="px-3 py-2 bg-background/50 rounded border border-border text-xs font-mono min-w-[3rem] text-center">
+            {strokeWidth}px
           </div>
         </div>
       </div>

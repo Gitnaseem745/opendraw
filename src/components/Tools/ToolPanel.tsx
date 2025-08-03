@@ -23,8 +23,6 @@ import { Tools } from '@/types';
 import { ToolButton } from '../shared/ToolButton';
 import { UndoRedoButtons } from './UndoRedoButtons';
 import { ViewControls } from './ViewControls';
-import { ObjectControls } from './ObjectControls';
-import { StrokeControls } from './StrokeControls';
 import { ArrowRight, Circle, Diamond, Eraser, Hand, Lock, Minus, MousePointer2, Pencil, Square, Triangle, TypeOutline } from 'lucide-react';
 import ExportPanel from './ExportPanel';
 
@@ -83,12 +81,6 @@ export const ToolPanel = () => {
                 <ViewControls />
             </div>
         </div>
-      
-        {/* Object Controls */}
-        <ObjectControls />
-
-         {/* Stroke Controls */}
-        <StrokeControls />
 
         {/* Export Panel */}
         <ExportPanel />

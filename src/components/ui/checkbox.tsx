@@ -51,15 +51,15 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   onChange,
   variant = 'square',
   size = 'md',
-  activeColor = 'bg-blue-500',
-  inactiveColor = 'bg-gray-300',
-  icon = <Check className="text-black" />,
+  activeColor = 'bg-primary',
+  inactiveColor = 'bg-background border-border',
+  icon = <Check className="text-primary-foreground" size={14} />,
   className,
 }) => {
   const sizeClasses = {
     sm: 'w-4 h-4',
-    md: 'w-6 h-6',
-    lg: 'w-8 h-8',
+    md: 'w-5 h-5',
+    lg: 'w-6 h-6',
   };
 
   return (
@@ -75,10 +75,10 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       <label
         htmlFor={id}
         className={cn(
-          'flex items-center justify-center cursor-pointer transition-colors duration-300 ease-in-out border',
+          'flex items-center justify-center cursor-pointer transition-all duration-200 ease-in-out border-2 hover:border-primary/50',
           sizeClasses[size],
           checked ? activeColor : inactiveColor,
-          variant === 'circle' ? 'rounded-full' : '',
+          variant === 'circle' ? 'rounded-full' : 'rounded-sm',
         )}
       >
         {checked && icon}

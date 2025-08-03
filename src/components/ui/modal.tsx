@@ -117,7 +117,7 @@ const Modal = ({
       <div
         ref={modalRef}
         className={cn(
-          "bg-background rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-auto",
+          "bg-background border border-border rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-auto",
           isOpen && !isClosing ? "animate-in zoom-in-95" : "animate-out zoom-out-95",
           className,
         )}

@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
 import { Checkbox } from '@/components/ui/checkbox';
 import { SimpleDropdownWrapper } from '@/components/ui/dropdown-wrapper';
-import { Download, FileImage, FileType, Image, Palette, Upload } from 'lucide-react';
+import { Download, FileImage, FileType, Palette, Upload } from 'lucide-react';
 import { Shape } from '@/types';
 
 /**
@@ -92,8 +92,8 @@ export const ExportImportProvider: React.FC<{ children: ReactNode }> = ({ childr
   };
 
   const exportFormats = [
-    { value: 'png', label: 'PNG Image', icon: <Image size={16} /> },
-    { value: 'jpeg', label: 'JPEG Image', icon: <Image size={16} /> },
+    { value: 'png', label: 'PNG Image', icon: <FileImage size={16} /> },
+    { value: 'jpeg', label: 'JPEG Image', icon: <FileImage size={16} /> },
     { value: 'svg', label: 'SVG Vector', icon: <FileType size={16} /> },
     { value: 'pdf', label: 'PDF Document', icon: <FileImage size={16} /> },
     { value: 'json', label: 'JSON Data', icon: <FileType size={16} /> },
@@ -250,128 +250,134 @@ export const ExportModals: React.FC = () => {
       <Modal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
+        className="max-w-lg"
       >
-        <div className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Export Drawing</h2>
-          <div className="space-y-6">
-          {/* Format Selection */}
-          <div>
-            <label className="block text-sm font-medium mb-2">Export Format</label>
-            <SimpleDropdownWrapper
-              value={exportOptions.format}
-              onChange={(value: string) => setExportOptions(prev => ({ ...prev, format: value as ExportOptions['format'] }))}
-              options={exportFormats.map(format => ({
-                value: format.value,
-                label: format.label,
-                icon: format.icon
-              }))}
-              placeholder="Select format"
-            />
+        <div className="p-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">Export Drawing</h2>
           </div>
-
-          {/* Export Options */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="selectedOnly"
-                name="selectedOnly"
-                checked={exportOptions.selectedOnly || false}
-                onChange={(e) => 
-                  setExportOptions(prev => ({ ...prev, selectedOnly: e.target.checked }))
-                }
+          
+          <div className="space-y-5">
+            {/* Format Selection */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-foreground">Export Format</label>
+              <SimpleDropdownWrapper
+                value={exportOptions.format}
+                onChange={(value: string) => setExportOptions(prev => ({ ...prev, format: value as ExportOptions['format'] }))}
+                options={exportFormats.map(format => ({
+                  value: format.value,
+                  label: format.label,
+                  icon: format.icon
+                }))}
+                placeholder="Select format"
               />
-              <label htmlFor="selectedOnly" className="text-sm">
-                Export selected shapes only ({selectedShapes.length} selected)
-              </label>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="includeBackground"
-                name="includeBackground"
-                checked={exportOptions.includeBackground}
-                onChange={(e) => 
-                  setExportOptions(prev => ({ ...prev, includeBackground: e.target.checked }))
-                }
-              />
-              <label htmlFor="includeBackground" className="text-sm">
-                Include background
-              </label>
-            </div>
-
-            {/* Background Color Selection */}
-            {exportOptions.includeBackground && exportOptions.format !== 'json' && exportOptions.format !== 'native' && (
-              <div>
-                <label className="block text-sm font-medium mb-2">Background Color</label>
-                <SimpleDropdownWrapper
-                  value={exportOptions.backgroundColor || '#ffffff'}
-                  onChange={(value: string) => setExportOptions(prev => ({ ...prev, backgroundColor: value }))}
-                  options={backgroundColors}
-                  placeholder="Select background color"
+            {/* Export Options */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <Checkbox
+                  id="selectedOnly"
+                  name="selectedOnly"
+                  checked={exportOptions.selectedOnly || false}
+                  onChange={(e) => 
+                    setExportOptions(prev => ({ ...prev, selectedOnly: e.target.checked }))
+                  }
                 />
-              </div>
-            )}
-
-            {/* JPEG Quality */}
-            {exportOptions.format === 'jpeg' && (
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Quality: {Math.round((exportOptions.quality || 0.9) * 100)}%
+                <label htmlFor="selectedOnly" className="text-sm text-foreground cursor-pointer">
+                  Export selected shapes only ({selectedShapes.length} selected)
                 </label>
-                <input
-                  type="range"
-                  min="0.1"
-                  max="1"
-                  step="0.1"
-                  value={exportOptions.quality || 0.9}
-                  onChange={(e) => setExportOptions(prev => ({ 
-                    ...prev, 
-                    quality: parseFloat(e.target.value) 
-                  }))}
-                  className="w-full"
-                />
               </div>
-            )}
-          </div>
 
-          {/* Format Information */}
-          <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-            {exportOptions.format === 'png' && (
-              <p>PNG: High quality, lossless compression, supports transparency</p>
-            )}
-            {exportOptions.format === 'jpeg' && (
-              <p>JPEG: Smaller file size, lossy compression, no transparency</p>
-            )}
-            {exportOptions.format === 'svg' && (
-              <p>SVG: Vector format, scalable, editable in design software</p>
-            )}
-            {exportOptions.format === 'pdf' && (
-              <p>PDF: Document format, printable, universal compatibility</p>
-            )}
-            {exportOptions.format === 'json' && (
-              <p>JSON: Data format for importing into other applications</p>
-            )}
-            {exportOptions.format === 'native' && (
-              <p>Native: Full fidelity format for re-importing and editing</p>
-            )}
-          </div>
+              <div className="flex items-center space-x-3">
+                <Checkbox
+                  id="includeBackground"
+                  name="includeBackground"
+                  checked={exportOptions.includeBackground}
+                  onChange={(e) => 
+                    setExportOptions(prev => ({ ...prev, includeBackground: e.target.checked }))
+                  }
+                />
+                <label htmlFor="includeBackground" className="text-sm text-foreground cursor-pointer">
+                  Include background
+                </label>
+              </div>
 
-          {/* Export Button */}
-          <div className="flex justify-end space-x-2">
-            <Button
-              onClick={() => setIsOpen(false)}
-              variant="outline"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleExport}
-              disabled={isExporting || (exportOptions.selectedOnly && selectedShapes.length === 0)}
-            >
-              {isExporting ? 'Exporting...' : 'Export'}
-            </Button>
+              {/* Background Color Selection */}
+              {exportOptions.includeBackground && exportOptions.format !== 'json' && exportOptions.format !== 'native' && (
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-foreground">Background Color</label>
+                  <SimpleDropdownWrapper
+                    value={exportOptions.backgroundColor || '#ffffff'}
+                    onChange={(value: string) => setExportOptions(prev => ({ ...prev, backgroundColor: value }))}
+                    options={backgroundColors}
+                    placeholder="Select background color"
+                  />
+                </div>
+              )}
+
+              {/* JPEG Quality */}
+              {exportOptions.format === 'jpeg' && (
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-foreground">
+                    Quality: {Math.round((exportOptions.quality || 0.9) * 100)}%
+                  </label>
+                  <input
+                    type="range"
+                    min="0.1"
+                    max="1"
+                    step="0.1"
+                    value={exportOptions.quality || 0.9}
+                    onChange={(e) => setExportOptions(prev => ({ 
+                      ...prev, 
+                      quality: parseFloat(e.target.value) 
+                    }))}
+                    className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Format Information */}
+            <div className="text-sm text-muted-foreground bg-muted/30 p-4 rounded-lg border">
+              {exportOptions.format === 'png' && (
+                <p>PNG: High quality, lossless compression, supports transparency</p>
+              )}
+              {exportOptions.format === 'jpeg' && (
+                <p>JPEG: Smaller file size, lossy compression, no transparency</p>
+              )}
+              {exportOptions.format === 'svg' && (
+                <p>SVG: Vector format, scalable, editable in design software</p>
+              )}
+              {exportOptions.format === 'pdf' && (
+                <p>PDF: Document format, printable, universal compatibility</p>
+              )}
+              {exportOptions.format === 'json' && (
+                <p>JSON: Data format for importing into other applications</p>
+              )}
+              {exportOptions.format === 'native' && (
+                <p>Native: Full fidelity format for re-importing and editing</p>
+              )}
+            </div>
+
+            {/* Export Button */}
+            <div className="flex justify-end space-x-3 pt-2">
+              <Button
+                onClick={() => setIsOpen(false)}
+                variant="outline"
+                className="px-6"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleExport}
+                disabled={isExporting || (exportOptions.selectedOnly && selectedShapes.length === 0)}
+                className="px-6"
+              >
+                {isExporting ? 'Exporting...' : 'Export'}
+              </Button>
+            </div>
           </div>
-        </div>
         </div>
       </Modal>
 
@@ -379,45 +385,52 @@ export const ExportModals: React.FC = () => {
       <Modal
         isOpen={isImportOpen}
         onClose={() => setIsImportOpen(false)}
+        className="max-w-lg"
       >
-        <div className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Import Drawing</h2>
-          <div className="space-y-4">
-          <p className="text-sm text-gray-600">
-            Import drawings from .opendraw (native format) or .json files.
-          </p>
-          
-          <div>
-            <input
-              type="file"
-              accept=".opendraw,.json"
-              onChange={handleImport}
-              className="block w-full text-sm text-gray-500
-                file:mr-4 file:py-2 file:px-4
-                file:rounded-full file:border-0
-                file:text-sm file:font-semibold
-                file:bg-blue-50 file:text-blue-700
-                hover:file:bg-blue-100"
-            />
+        <div className="p-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">Import Drawing</h2>
           </div>
           
-          <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-            <p><strong>Supported formats:</strong></p>
-            <ul className="list-disc list-inside mt-1 space-y-1">
-              <li>.opendraw - Native format with full editing capabilities</li>
-              <li>.json - JSON data format with shape information</li>
-            </ul>
+          <div className="space-y-5">
+            <p className="text-sm text-muted-foreground">
+              Import drawings from .opendraw (native format) or .json files.
+            </p>
+            
+            <div>
+              <input
+                type="file"
+                accept=".opendraw,.json"
+                onChange={handleImport}
+                className="block w-full text-sm text-foreground
+                  file:mr-4 file:py-2.5 file:px-4
+                  file:rounded-md file:border-0
+                  file:text-sm file:font-medium
+                  file:bg-primary file:text-primary-foreground
+                  hover:file:bg-primary/90 file:cursor-pointer
+                  border border-border rounded-md bg-background
+                  cursor-pointer"
+              />
+            </div>
+            
+            <div className="text-sm text-muted-foreground bg-muted/30 p-4 rounded-lg border">
+              <p className="font-medium text-foreground mb-2">Supported formats:</p>
+              <ul className="list-disc list-inside space-y-1">
+                <li>.opendraw - Native format with full editing capabilities</li>
+                <li>.json - JSON data format with shape information</li>
+              </ul>
+            </div>
+            
+            <div className="flex justify-end pt-2">
+              <Button
+                onClick={() => setIsImportOpen(false)}
+                variant="outline"
+                className="px-6"
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
-          
-          <div className="flex justify-end">
-            <Button
-              onClick={() => setIsImportOpen(false)}
-              variant="outline"
-            >
-              Cancel
-            </Button>
-          </div>
-        </div>
         </div>
       </Modal>
     </>

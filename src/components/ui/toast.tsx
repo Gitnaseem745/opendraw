@@ -14,11 +14,11 @@ interface ToastProps {
 }
 
 const typeStyles = {
-    default: 'bg-gray-800 text-white',
+    default: 'bg-card text-card-foreground border border-border',
     success: 'bg-green-500 text-white',
-    error: 'bg-red-500 text-white',
-    info: 'bg-blue-500 text-white',
-    warning: 'bg-yellow-500 text-black',
+    error: 'bg-destructive text-destructive-foreground',
+    info: 'bg-primary text-primary-foreground',
+    warning: 'bg-yellow-500 text-yellow-900 dark:text-yellow-100',
 };
 
 /**

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useDrawingStore } from '@/store/drawingStore';
+import { useUIStore } from '@/store/uiStore';
 import { drawShape } from '@/lib/draw-shape';
 import { canvasUtils } from '@/lib/canvasUtils';
 import { Shape } from '@/types';
@@ -43,6 +44,41 @@ const drawSelectionIndicator = (ctx: CanvasRenderingContext2D, shape: Shape, isM
 };
 
 /**
+ * Draws a grid overlay on the canvas
+ */
+const drawGrid = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
+  ctx.save();
+  
+  // Grid settings
+  const gridSize = 20; // Grid cell size in pixels
+  const gridColor = getComputedStyle(document.documentElement)
+    .getPropertyValue('--border')
+    .trim() || '#e5e5e5';
+  
+  ctx.strokeStyle = gridColor;
+  ctx.lineWidth = 1;
+  ctx.globalAlpha = 0.5; // Make grid semi-transparent
+  
+  // Draw vertical lines
+  for (let x = 0; x <= canvas.width; x += gridSize) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvas.height);
+    ctx.stroke();
+  }
+  
+  // Draw horizontal lines
+  for (let y = 0; y <= canvas.height; y += gridSize) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+  }
+  
+  ctx.restore();
+};
+
+/**
  * Custom hook that handles canvas rendering and re-rendering.
  * Manages canvas transformations (scale, pan), renders all shapes,
  * and ensures the canvas is updated when the drawing state changes.
@@ -52,6 +88,7 @@ const drawSelectionIndicator = (ctx: CanvasRenderingContext2D, shape: Shape, isM
  */
 export const useCanvasRenderer = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
   const { shapes, selectedShape, selectedShapes, action, scale, panOffset } = useDrawingStore();
+  const { showGrid } = useUIStore();
   const renderTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const performRender = useCallback(() => {
@@ -70,6 +107,16 @@ export const useCanvasRenderer = (canvasRef: React.RefObject<HTMLCanvasElement>)
     if (!result) return;
     
     const { ctx, roughCanvas } = result;
+    
+    // Draw grid if enabled (draw without transformations)
+    if (showGrid) {
+      ctx.save();
+      // Reset transformations temporarily for grid drawing
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      drawGrid(ctx, canvas);
+      ctx.restore();
+      // After restore, we're back to the transformed state from setupCanvasContext
+    }
     
     // Sort shapes by zIndex for proper rendering order
     const sortedShapes = [...shapes].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
@@ -93,7 +140,7 @@ export const useCanvasRenderer = (canvasRef: React.RefObject<HTMLCanvasElement>)
     });
     
     ctx.restore();
-  }, [canvasRef, shapes, selectedShape, selectedShapes, action, scale, panOffset]);
+  }, [canvasRef, shapes, selectedShape, selectedShapes, action, scale, panOffset, showGrid]);
   
   useEffect(() => {
     // Clear any pending render timeout

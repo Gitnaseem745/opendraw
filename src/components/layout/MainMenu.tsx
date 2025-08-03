@@ -19,7 +19,7 @@
 
 'use client';
 import { useCanvasStore } from "@/store/canvasStore";
-import { Menu, Download, Trash2, Github, Linkedin, Twitter } from "lucide-react"
+import { Menu, Download, Trash2, Github, Linkedin, Twitter, Upload } from "lucide-react"
 import { useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown";
 import Toast from "../ui/toast";
@@ -28,6 +28,7 @@ import { ColorPicker } from "../shared";
 import { config } from "@/config";
 import { canvasUtils } from "@/lib/canvasUtils";
 import { useDrawingStore } from "@/store/drawingStore";
+import { ExportModals, ExportImportProvider, useExportImport } from "../Tools";
 
 /**
  * Interface for menu action items
@@ -57,10 +58,11 @@ interface SocialLink {
  * 
  * @returns {JSX.Element} The rendered main menu component
  */
-export const MainMenu = () => {
+const MainMenuContent = () => {
     const [toastOpen, setToastOpen] = useState<boolean>(false);
+    const { setIsOpen, setIsImportOpen } = useExportImport();
 
-    const { canvasRef, saveAsImage } = useCanvasStore();
+    const { canvasRef } = useCanvasStore();
     const { clearCanvas: clearCanvasStore, } = useDrawingStore();
 
     /**
@@ -84,14 +86,27 @@ export const MainMenu = () => {
     const menuActions: MenuAction[] = [
         {
             icon: <Download size={16} />,
-            label: "Save as Image...",
-            action: () => saveAsImage(canvasRef),
+            label: "Export Drawing",
+            action: () => setIsOpen(true),
             shortcut: "Ctrl+S"
         },
         {
+            icon: <Upload size={16} />,
+            label: "Import Drawing", 
+            action: () => setIsImportOpen(true),
+            shortcut: "Ctrl+O"
+        },
+        // {
+        //     icon: <Download size={16} />,
+        //     label: "Save as Image...",
+        //     action: () => saveAsImage(canvasRef),
+        //     shortcut: "Ctrl+S"
+        // },
+        {
             icon: <Trash2 size={16} />,
             label: "Reset the canvas",
-            action: clearCanvas
+            action: clearCanvas,
+            shortcut: "0"
         }
     ];
 
@@ -172,7 +187,21 @@ export const MainMenu = () => {
                 duration={2000}
                 type="success"
             />
+
+            {/* Export/Import Modals */}
+            <ExportModals />
         
         </div>
     )
 }
+
+/**
+ * Main Menu component wrapped with ExportImportProvider
+ */
+export const MainMenu = () => {
+    return (
+        <ExportImportProvider>
+            <MainMenuContent />
+        </ExportImportProvider>
+    );
+};

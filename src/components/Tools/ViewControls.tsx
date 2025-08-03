@@ -70,7 +70,7 @@ export const ViewControls = () => {
     },
     { 
       icon: <Home size={18} />, 
-      label: 'Reset View (Ctrl+0)', 
+      label: 'Reset View (Ctrl+0 or 0)', 
       onClick: resetView, 
       isActive: true,
       disabled: false 
@@ -84,7 +84,7 @@ export const ViewControls = () => {
     },
     { 
       icon: <Ruler size={18} />, 
-      label: 'Toggle Rulers (R)', 
+      label: 'Toggle Rulers (Ctrl+;)', 
       onClick: toggleRulers, 
       isActive: showRulers,
       disabled: false 

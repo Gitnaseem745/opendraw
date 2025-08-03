@@ -48,7 +48,7 @@ export const SimpleDropdownWrapper: React.FC<SimpleDropdownWrapperProps> = ({
           <ChevronDown size={16} />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-full">
+      <DropdownMenuContent className="w-full z-[1000]">
         {options.map((option) => (
           <DropdownMenuItem
             key={option.value}

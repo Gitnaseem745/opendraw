@@ -5,22 +5,61 @@
  * @author Open Draw Team
  */
 
-import React, { useState } from 'react';
+import React, { useState, createContext, useContext, ReactNode, useEffect } from 'react';
 import { useDrawingStore } from '@/store/drawingStore';
 import { useCanvasStore } from '@/store/canvasStore';
+import { useUIStore } from '@/store/uiStore';
 import { ExportUtils, ExportOptions } from '@/lib/exportUtils';
 import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
 import { Checkbox } from '@/components/ui/checkbox';
 import { SimpleDropdownWrapper } from '@/components/ui/dropdown-wrapper';
 import { Download, FileImage, FileType, Image, Palette, Upload } from 'lucide-react';
+import { Shape } from '@/types';
 
 /**
- * Export panel component with comprehensive export options
+ * Export/Import Context interface
  */
-export const ExportPanel: React.FC = () => {
+interface ExportImportContextType {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  isImportOpen: boolean;
+  setIsImportOpen: (open: boolean) => void;
+  exportOptions: ExportOptions;
+  setExportOptions: React.Dispatch<React.SetStateAction<ExportOptions>>;
+  isExporting: boolean;
+  exportFormats: Array<{ value: string; label: string; icon: React.ReactNode }>;
+  handleExport: () => Promise<void>;
+  handleImport: (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
+  backgroundColors: Array<{ value: string; label: string }>;
+  shapes: Shape[];
+  selectedShapes: Shape[];
+}
+
+/**
+ * Export/Import Context
+ */
+const ExportImportContext = createContext<ExportImportContextType | undefined>(undefined);
+
+/**
+ * Custom hook to use export/import context
+ */
+export const useExportImport = (): ExportImportContextType => {
+  const context = useContext(ExportImportContext);
+  if (!context) {
+    throw new Error('useExportImport must be used within an ExportImportProvider');
+  }
+  return context;
+};
+
+/**
+ * Export/Import Provider Component
+ */
+export const ExportImportProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { shapes, selectedShapes } = useDrawingStore();
   const { canvasRef } = useCanvasStore();
+  const { showExportModal, showImportModal, setShowExportModal, setShowImportModal } = useUIStore();
+  
   const [isOpen, setIsOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [exportOptions, setExportOptions] = useState<ExportOptions>({
@@ -31,6 +70,26 @@ export const ExportPanel: React.FC = () => {
     backgroundColor: '#ffffff'
   });
   const [isExporting, setIsExporting] = useState(false);
+
+  // Sync global state with local state
+  useEffect(() => {
+    setIsOpen(showExportModal);
+  }, [showExportModal]);
+
+  useEffect(() => {
+    setIsImportOpen(showImportModal);
+  }, [showImportModal]);
+
+  // Update global state when local state changes
+  const handleSetIsOpen = (open: boolean) => {
+    setIsOpen(open);
+    setShowExportModal(open);
+  };
+
+  const handleSetIsImportOpen = (open: boolean) => {
+    setIsImportOpen(open);
+    setShowImportModal(open);
+  };
 
   const exportFormats = [
     { value: 'png', label: 'PNG Image', icon: <Image size={16} /> },
@@ -60,7 +119,7 @@ export const ExportPanel: React.FC = () => {
       alert('Export failed. Please try again.');
     } finally {
       setIsExporting(false);
-      setIsOpen(false);
+      handleSetIsOpen(false);
     }
   };
 
@@ -90,7 +149,7 @@ export const ExportPanel: React.FC = () => {
       alert('Import failed. Please check the file format and try again.');
     }
     
-    setIsImportOpen(false);
+    handleSetIsImportOpen(false);
     // Reset file input
     event.target.value = '';
   };
@@ -103,33 +162,90 @@ export const ExportPanel: React.FC = () => {
     { value: 'transparent', label: 'Transparent' }
   ];
 
+  const contextValue: ExportImportContextType = {
+    isOpen,
+    setIsOpen: handleSetIsOpen,
+    isImportOpen,
+    setIsImportOpen: handleSetIsImportOpen,
+    exportOptions,
+    setExportOptions,
+    isExporting,
+    exportFormats,
+    handleExport,
+    handleImport,
+    backgroundColors,
+    shapes,
+    selectedShapes
+  };
+
+  return (
+    <ExportImportContext.Provider value={contextValue}>
+      {children}
+    </ExportImportContext.Provider>
+  );
+};
+
+/**
+ * Export Button Component
+ */
+export const ExportButton: React.FC = () => {
+  const { setIsOpen } = useExportImport();
+  
+  return (
+    <Button
+      onClick={() => setIsOpen(true)}
+      variant="outline"
+      size="sm"
+      title="Export Drawing"
+      className="flex items-center gap-2"
+    >
+      <Download size={16} />
+      Export
+    </Button>
+  );
+};
+
+/**
+ * Import Button Component
+ */
+export const ImportButton: React.FC = () => {
+  const { setIsImportOpen } = useExportImport();
+  
+  return (
+    <Button
+      onClick={() => setIsImportOpen(true)}
+      variant="outline"
+      size="sm"
+      title="Import Drawing"
+      className="flex items-center gap-2"
+    >
+      <Upload size={16} />
+      Import
+    </Button>
+  );
+};
+
+/**
+ * Export Modals Component - handles both export and import modals
+ */
+export const ExportModals: React.FC = () => {
+  const {
+    isOpen,
+    setIsOpen,
+    isImportOpen,
+    setIsImportOpen,
+    exportOptions,
+    setExportOptions,
+    isExporting,
+    exportFormats,
+    handleExport,
+    handleImport,
+    backgroundColors,
+    selectedShapes
+  } = useExportImport();
+
   return (
     <>
-      {/* Export Button */}
-      <div className="flex gap-2">
-        <Button
-          onClick={() => setIsOpen(true)}
-          variant="outline"
-          size="sm"
-          title="Export Drawing"
-          className="flex items-center gap-2"
-        >
-          <Download size={16} />
-          Export
-        </Button>
-        
-        <Button
-          onClick={() => setIsImportOpen(true)}
-          variant="outline"
-          size="sm"
-          title="Import Drawing"
-          className="flex items-center gap-2"
-        >
-          <Upload size={16} />
-          Import
-        </Button>
-      </div>
-
       {/* Export Modal */}
       <Modal
         isOpen={isOpen}
@@ -305,6 +421,23 @@ export const ExportPanel: React.FC = () => {
         </div>
       </Modal>
     </>
+  );
+};
+
+/**
+ * Export panel component with comprehensive export options
+ */
+export const ExportPanel: React.FC = () => {
+  return (
+    <ExportImportProvider>
+      {/* Export Button */}
+      <div className="flex gap-2">
+        <ExportButton />
+        <ImportButton />
+      </div>
+
+      <ExportModals />
+    </ExportImportProvider>
   );
 };
 

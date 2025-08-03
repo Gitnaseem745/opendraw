@@ -97,6 +97,7 @@ A modern, feature-rich drawing application built with Next.js and TypeScript. Cr
 | `T` | Text tool |
 | `H` | Pan tool |
 | `E` | Eraser tool |
+| `G` | Toggle grid |
 | `Ctrl+Z` | Undo |
 | `Ctrl+Y` | Redo |
 | `Ctrl+D` | Duplicate |

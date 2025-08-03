@@ -24,7 +24,6 @@ import { ToolButton } from '../shared/ToolButton';
 import { UndoRedoButtons } from './UndoRedoButtons';
 import { ViewControls } from './ViewControls';
 import { ArrowRight, Circle, Diamond, Eraser, Hand, Lock, Minus, MousePointer2, Pencil, Square, Triangle, TypeOutline } from 'lucide-react';
-import ExportPanel from './ExportPanel';
 
 /**
  * Main tool panel component
@@ -42,17 +41,17 @@ export const ToolPanel = () => {
    * Available drawing tools configuration
    */
   const tools = [
-    { type: Tools.selection, icon: <MousePointer2 size={20} />, label: 'Select' },
-    { type: Tools.pencil, icon: <Pencil size={20} />, label: 'Pencil' },
-    { type: Tools.line, icon: <Minus size={20} />, label: 'Line' },
-    { type: Tools.rectangle, icon: <Square size={20} />, label: 'Rectangle' },
-    { type: Tools.triangle, icon: <Triangle size={20} />, label: 'Triangle' },
-    { type: Tools.circle, icon: <Circle size={20} />, label: 'Circle' },
-    { type: Tools.diamond, icon: <Diamond size={20} />, label: 'Diamond' },
-    { type: Tools.arrow, icon: <ArrowRight size={20} />, label: 'Arrow' },
-    { type: Tools.text, icon: <TypeOutline size={20} />, label: 'Text' },
-    { type: Tools.pan, icon: <Hand size={20} />, label: 'Pan' },
-    { type: Tools.eraser, icon: <Eraser size={20} />, label: 'Eraser' },
+    { type: Tools.selection, icon: <MousePointer2 size={20} />, label: 'Select (V)' },
+    { type: Tools.pencil, icon: <Pencil size={20} />, label: 'Pencil (P)' },
+    { type: Tools.line, icon: <Minus size={20} />, label: 'Line (L)' },
+    { type: Tools.rectangle, icon: <Square size={20} />, label: 'Rectangle (R)' },
+    { type: Tools.triangle, icon: <Triangle size={20} />, label: 'Triangle (U)' },
+    { type: Tools.circle, icon: <Circle size={20} />, label: 'Circle (C)' },
+    { type: Tools.diamond, icon: <Diamond size={20} />, label: 'Diamond (D)' },
+    { type: Tools.arrow, icon: <ArrowRight size={20} />, label: 'Arrow (A)' },
+    { type: Tools.text, icon: <TypeOutline size={20} />, label: 'Text (T)' },
+    { type: Tools.pan, icon: <Hand size={20} />, label: 'Pan (H)' },
+    { type: Tools.eraser, icon: <Eraser size={20} />, label: 'Eraser (E)' },
     { type: Tools.lock, icon: <Lock size={20} />, label: 'Lock' },
   ];
   
@@ -81,9 +80,6 @@ export const ToolPanel = () => {
                 <ViewControls />
             </div>
         </div>
-
-        {/* Export Panel */}
-        <ExportPanel />
     </div>
   );
 };

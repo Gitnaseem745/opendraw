@@ -37,16 +37,6 @@ export const StatusBar = () => {
     const { tool, scale, shapes, strokeWidth, strokeColor, fillColor } = useDrawingStore();
 
     /**
-     * Gets the current stroke width from canvas context
-     * @returns {string} The current stroke width or 'N/A' if unavailable
-     */
-    const getCurrentStrokeWidth = (): string => {
-        if (!canvasRef.current) return 'N/A';
-        const context = canvasRef.current.getContext('2d');
-        return context?.lineWidth?.toString() || 'N/A';
-    };
-
-    /**
      * Formats the tool name for display
      * @param {string} toolName - The tool name to format
      * @returns {string} The formatted tool name

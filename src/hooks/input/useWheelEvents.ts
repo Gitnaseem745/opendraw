@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { useDrawingStore } from '@/store/drawingStore';
-import { useKeyboard } from './useKeyboard';
 
 /**
  * Custom hook that handles mouse wheel events for zooming and panning.

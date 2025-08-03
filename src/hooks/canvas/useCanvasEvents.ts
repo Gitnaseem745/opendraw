@@ -68,7 +68,13 @@ export const useCanvasEvents = (canvasRef: React.RefObject<HTMLCanvasElement>) =
   });
   
   const getMouseCoordinates = useCallback((event: MouseEvent) => {
-    return canvasUtils.getMouseCoordinates(event, panOffset, scale, scaleOffset);
+    // Handle both regular mouse events and synthetic events from touch
+    return canvasUtils.getMouseCoordinates(
+      { clientX: event.clientX, clientY: event.clientY },
+      panOffset,
+      scale,
+      scaleOffset
+    );
   }, [panOffset, scale, scaleOffset]);
 
   const updateElement = useCallback((

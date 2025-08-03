@@ -21,10 +21,11 @@
 'use client';
 import { useCanvasEvents } from '@/hooks/canvas/useCanvasEvents';
 import { useCanvasRenderer } from '@/hooks/canvas/useCanvasRenderer';
+import { useTouchEvents, useMobileOptimization } from '@/hooks/input';
 import { useCanvasStore } from '@/store/canvasStore';
 import { useDrawingStore } from '@/store/drawingStore';
 import { Tools } from '@/types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 /**
  * Main drawing canvas component
@@ -41,7 +42,16 @@ export const DrawingCanvas = () => {
   
   // Custom hooks handle the complex logic
   const { handleMouseDown, handleMouseMove, handleMouseUp } = useCanvasEvents(canvasRef as React.RefObject<HTMLCanvasElement>);
+  const { handleTouchStart, handleTouchMove, handleTouchEnd } = useTouchEvents(canvasRef as React.RefObject<HTMLCanvasElement>);
+  const { optimizeCanvasForTouch, isMobileDevice } = useMobileOptimization();
   useCanvasRenderer(canvasRef as React.RefObject<HTMLCanvasElement>);
+  
+  // Optimize canvas for touch when it becomes available
+  useEffect(() => {
+    if (canvasRef.current && isMobileDevice()) {
+      optimizeCanvasForTouch(canvasRef.current);
+    }
+  }, [canvasRef, optimizeCanvasForTouch, isMobileDevice]);
   
   /**
    * Handles mouse movement with eraser position tracking
@@ -97,6 +107,9 @@ export const DrawingCanvas = () => {
         onMouseMove={handleMouseMoveWithEraser}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         className={`absolute inset-0 ${colors[currentChecked]} ${getCursorClass()}`}
         style={{ 
           position: "absolute", 

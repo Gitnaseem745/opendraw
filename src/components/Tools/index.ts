@@ -1,4 +1,5 @@
 export { ToolPanel } from './ToolPanel';
+export { MobileToolPanel } from './MobileToolPanel';
 export { UndoRedoButtons } from './UndoRedoButtons';
 export { ViewControls } from './ViewControls';
 export { StrokeControls } from './StrokeControls';

@@ -106,7 +106,7 @@ const MainMenuContent = () => {
             icon: <Trash2 size={16} />,
             label: "Reset the canvas",
             action: clearCanvas,
-            shortcut: "0"
+            shortcut: "N"
         }
     ];
 

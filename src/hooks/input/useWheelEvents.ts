@@ -14,46 +14,11 @@ export const useWheelEvents = () => {
   const isCtrlPressed = useRef(false);
   const isCmdPressed = useRef(false);
   
-  // Track Ctrl key
-  useKeyboard({
-    keys: 'Control',
-    callback: () => {
-      isCtrlPressed.current = true;
-    },
-    eventType: 'keydown'
-  });
-
-  useKeyboard({
-    keys: 'Control',
-    callback: () => {
-      isCtrlPressed.current = false;
-    },
-    eventType: 'keyup'
-  });
-
-  // Track Cmd key (Mac)
-  useKeyboard({
-    keys: 'Meta',
-    callback: () => {
-      isCmdPressed.current = true;
-    },
-    eventType: 'keydown'
-  });
-
-  useKeyboard({
-    keys: 'Meta',
-    callback: () => {
-      isCmdPressed.current = false;
-    },
-    eventType: 'keyup'
-  });
-  
   useEffect(() => {
     const handleWheel = (event: WheelEvent) => {
       if (isCtrlPressed.current || isCmdPressed.current) {
         // Zoom
         event.preventDefault();
-        event.stopPropagation();
         const zoomDelta = event.deltaY * -0.01;
         const newScale = Math.min(Math.max(scale + zoomDelta, 0.1), 20);
         setScale(newScale);

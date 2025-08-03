@@ -1,7 +1,9 @@
+import { resetCanvas } from '@/lib/canvasUtils';
 import { useKeyboard } from './useKeyboard';
 import { useDrawingStore } from '@/store/drawingStore';
 import { useUIStore } from '@/store/uiStore';
 import { Tools } from '@/types';
+import { useCanvasStore } from '@/store/canvasStore';
 
 /**
  * Custom hook that manages keyboard shortcuts for the drawing application.
@@ -21,6 +23,7 @@ import { Tools } from '@/types';
  * T - Text tool
  * H - Pan tool
  * E - Eraser tool
+ * K - Lock tool
  * 
  * === VIEW CONTROLS ===
  * Ctrl+0 or 0 - Reset view to fit canvas
@@ -49,11 +52,12 @@ import { Tools } from '@/types';
  * Ctrl+Shift+[ - Send to back
  * Ctrl+Shift+. - Bring to front (alternative)
  * Ctrl+Shift+, - Send to back (alternative)
- * 
+ * Alt + mouse click - Duplicate Shapes
+ *  
  * === FILE OPERATIONS ===
  * Ctrl+S - Export drawing
  * Ctrl+O - Import drawing
- * Ctrl+N - New canvas (clear current)
+ * N - New canvas (clear current)
  * 
  * @returns {void} - This hook doesn't return anything but sets up keyboard listeners
  */
@@ -66,6 +70,7 @@ export const useKeyboardShortcuts = () => {
     clearCanvas, setScale, scale
   } = useDrawingStore();
   const { toggleGrid, toggleRulers, setShowExportModal, setShowImportModal } = useUIStore();
+  const { canvasRef } = useCanvasStore()
   
   // Helper function to check if user is typing in an input field
   const isTypingInInput = (event: KeyboardEvent): boolean => {
@@ -78,6 +83,22 @@ export const useKeyboardShortcuts = () => {
     return isInput || isContentEditable || isWriting;
   };
   
+  // Reset Canvas shortcuts
+  useKeyboard({
+    keys: 'n',
+    callback: (e) => {
+      if (isTypingInInput(e)) {
+        return;
+      }
+      e.preventDefault();
+      const resetDrawing = confirm("Are you sure you want to create a new canvas? This action cannot be undone.");
+      if (resetDrawing) {
+        resetCanvas(canvasRef, true, clearCanvas);
+      }
+    },
+    preventDefault: true
+  })
+
   // Undo/Redo shortcuts
   useKeyboard({
     keys: ['Control', 'z'],
@@ -148,6 +169,15 @@ export const useKeyboardShortcuts = () => {
       setTool(Tools.line);
     },
   });
+  
+  useKeyboard({
+    keys: ['k'],
+    callback: (e) => {
+        if(isTypingInInput(e)) return;
+        e.preventDefault();
+        setTool(Tools.lock);
+    },
+  })
 
   useKeyboard({
     keys: 'r',
@@ -424,19 +454,6 @@ export const useKeyboardShortcuts = () => {
       if (isTypingInInput(e)) return;
       e.preventDefault();
       setShowImportModal(true);
-    },
-    preventDefault: true
-  });
-
-  useKeyboard({
-    keys: ['Control', 'n'],
-    callback: (e) => {
-      if (isTypingInInput(e)) return;
-      e.preventDefault();
-      const resetDrawing = confirm("Are you sure you want to create a new canvas? This action cannot be undone.");
-      if (resetDrawing) {
-        clearCanvas();
-      }
     },
     preventDefault: true
   });

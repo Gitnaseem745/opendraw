@@ -52,7 +52,7 @@ export const ToolPanel = () => {
     { type: Tools.text, icon: <TypeOutline size={20} />, label: 'Text (T)' },
     { type: Tools.pan, icon: <Hand size={20} />, label: 'Pan (H)' },
     { type: Tools.eraser, icon: <Eraser size={20} />, label: 'Eraser (E)' },
-    { type: Tools.lock, icon: <Lock size={20} />, label: 'Lock' },
+    { type: Tools.lock, icon: <Lock size={20} />, label: 'Lock (K)' },
   ];
   
   return (

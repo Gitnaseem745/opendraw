@@ -145,29 +145,34 @@ export const useKeyboardShortcuts = () => {
     preventDefault: true
   });
 
-  // Tool shortcuts - only work when not typing
   useKeyboard({
     keys: 'v',
     callback: (e) => {
       if (isTypingInInput(e)) return;
+      e.preventDefault();
       setTool(Tools.selection);
     },
+    preventDefault: true
   });
 
   useKeyboard({
     keys: 'p',
     callback: (e) => {
       if (isTypingInInput(e)) return;
+      e.preventDefault();
       setTool(Tools.pencil);
     },
+    preventDefault: true
   });
 
   useKeyboard({
     keys: 'l',
     callback: (e) => {
       if (isTypingInInput(e)) return;
+      e.preventDefault();
       setTool(Tools.line);
     },
+    preventDefault: true
   });
   
   useKeyboard({
@@ -177,70 +182,87 @@ export const useKeyboardShortcuts = () => {
         e.preventDefault();
         setTool(Tools.lock);
     },
+    preventDefault: true
   })
 
   useKeyboard({
     keys: 'r',
     callback: (e) => {
       if (isTypingInInput(e)) return;
+      e.preventDefault();
       setTool(Tools.rectangle);
     },
+    preventDefault: true
   });
 
   useKeyboard({
     keys: 't',
     callback: (e) => {
       if (isTypingInInput(e)) return;
+      e.preventDefault();
       setTool(Tools.text);
     },
+    preventDefault: true
   });
 
   useKeyboard({
     keys: 'h',
     callback: (e) => {
       if (isTypingInInput(e)) return;
+      e.preventDefault();
       setTool(Tools.pan);
     },
+    preventDefault: true
   });
 
   useKeyboard({
     keys: 'c',
     callback: (e) => {
       if (isTypingInInput(e)) return;
+      e.preventDefault();
       setTool(Tools.circle);
     },
+    preventDefault: true
   });
 
   useKeyboard({
     keys: 'a',
     callback: (e) => {
       if (isTypingInInput(e)) return;
+      e.preventDefault();
       setTool(Tools.arrow);
     },
+    preventDefault: true
   });
 
   useKeyboard({
     keys: 'e',
     callback: (e) => {
       if (isTypingInInput(e)) return;
+      e.preventDefault();
       setTool(Tools.eraser);
     },
+    preventDefault: true
   });
 
   useKeyboard({
     keys: 'd',
     callback: (e) => {
       if (isTypingInInput(e)) return;
+      e.preventDefault();
       setTool(Tools.diamond);
     },
+    preventDefault: true
   });
 
   useKeyboard({
     keys: 'u',
     callback: (e) => {
       if (isTypingInInput(e)) return;
+      e.preventDefault();
       setTool(Tools.triangle);
     },
+    preventDefault: true
   });
 
   // Grouping shortcuts
@@ -352,8 +374,10 @@ export const useKeyboardShortcuts = () => {
     keys: 'g',
     callback: (e) => {
       if (isTypingInInput(e)) return;
+      e.preventDefault();
       toggleGrid();
     },
+    preventDefault: true
   });
 
   useKeyboard({
@@ -510,7 +534,9 @@ export const useKeyboardShortcuts = () => {
     keys: 'Escape',
     callback: (e) => {
       if (isTypingInInput(e)) return;
+      e.preventDefault();
       setSelectedShapes([]);
     },
+    preventDefault: true
   });
 };

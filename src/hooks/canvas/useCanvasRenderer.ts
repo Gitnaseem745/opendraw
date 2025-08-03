@@ -123,7 +123,7 @@ export const useCanvasRenderer = (canvasRef: React.RefObject<HTMLCanvasElement>)
     
     // Render shapes
     sortedShapes.forEach(shape => {
-      if (action === "writing") return;
+      // Always render all shapes, including the one being edited
       drawShape(roughCanvas, ctx, shape);
     });
     
@@ -140,7 +140,7 @@ export const useCanvasRenderer = (canvasRef: React.RefObject<HTMLCanvasElement>)
     });
     
     ctx.restore();
-  }, [canvasRef, shapes, selectedShape, selectedShapes, action, scale, panOffset, showGrid]);
+  }, [canvasRef, shapes, selectedShape, selectedShapes, scale, panOffset, showGrid]);
   
   useEffect(() => {
     // Clear any pending render timeout

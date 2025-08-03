@@ -26,7 +26,7 @@ export const createShape = ({
         fillStyle: 'solid',
         // fillWeight: 3,
         strokeWidth: strokeWidth,
-        roughness: 1.1,
+        roughness: 1.5,
         bowing: 0.5,
         // strokeLineDash: [5, 10]
     };

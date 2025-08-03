@@ -21,6 +21,7 @@
 import { useRef, useEffect } from 'react';
 import { useDrawingStore } from '@/store/drawingStore';
 import { canvasUtils } from '@/lib/canvasUtils';
+import { useCanvasStore } from '@/store/canvasStore';
 
 /**
  * Text editor component for in-canvas text editing
@@ -33,13 +34,16 @@ import { canvasUtils } from '@/lib/canvasUtils';
  */
 export const TextEditor = () => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const { selectedShape, action, scale, panOffset, scaleOffset, setAction, setSelectedShape } = useDrawingStore();
+  const isInitializing = useRef(false);
+  const { selectedShape, action, scale, panOffset, scaleOffset, setAction, setSelectedShape, shapes, setShapes } = useDrawingStore();
+  const { canvasRef } = useCanvasStore();
   
   /**
    * Effect to focus and initialize text area when writing mode is activated
    */
   useEffect(() => {
     if (action === "writing" && textAreaRef.current && selectedShape) {
+      isInitializing.current = true;
       setTimeout(() => {
         if (textAreaRef.current) {
           textAreaRef.current.focus();
@@ -47,8 +51,12 @@ export const TextEditor = () => {
           // Position cursor at end of text
           const length = textAreaRef.current.value.length;
           textAreaRef.current.setSelectionRange(length, length);
+          // Allow blur events after a short delay
+          setTimeout(() => {
+            isInitializing.current = false;
+          }, 200);
         }
-      }, 0);
+      }, 100); // Increased timeout to prevent immediate blur
     }
   }, [action, selectedShape]);
   
@@ -57,6 +65,12 @@ export const TextEditor = () => {
    * @param {React.FocusEvent<HTMLTextAreaElement>} e - Blur event
    */
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    // Ignore blur events during initialization to prevent immediate exit
+    if (isInitializing.current) {
+      e.preventDefault();
+      return;
+    }
+    
     if (selectedShape) {
       const { id, x1, y1 } = selectedShape;
       const textValue = e.target.value;
@@ -65,24 +79,31 @@ export const TextEditor = () => {
       setSelectedShape(null);
       
       // Update the shape with the new text
-      const canvas = document.querySelector('canvas');
+      // Use canvas from store instead of querySelector
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      let textWidth = 100; // Default width
+      let textHeight = 24; // Default height
+      
       if (canvas) {
         const context = canvas.getContext('2d');
         if (context) {
           const fontSize = Math.max(16, 24 * scale); // Responsive font size
-          const { width: textWidth, height: textHeight } = canvasUtils.measureText(context, textValue, fontSize);
-          
-          const shapes = useDrawingStore.getState().shapes;
-          const shapesCopy = [...shapes];
-          shapesCopy[id] = {
-            ...shapesCopy[id],
-            text: textValue,
-            x2: x1 + textWidth,
-            y2: y1 + textHeight
-          };
-          useDrawingStore.getState().setShapes(shapesCopy, true);
+          const measured = canvasUtils.measureText(context, textValue, fontSize);
+          textWidth = measured.width;
+          textHeight = measured.height;
         }
       }
+      
+      // Get current state and update
+      const shapesCopy = [...shapes];
+      shapesCopy[id] = {
+        ...shapesCopy[id],
+        text: textValue,
+        x2: x1 + textWidth,
+        y2: y1 + textHeight
+      };
+      setShapes(shapesCopy, true);
     }
   };
 
@@ -99,9 +120,19 @@ export const TextEditor = () => {
       e.currentTarget.blur();
     }
   };
+
+  /**
+   * Prevent mouse events from propagating to canvas
+   * @param {React.MouseEvent<HTMLTextAreaElement>} e - Mouse event
+   */
+  const handleMouseEvents = (e: React.MouseEvent<HTMLTextAreaElement>) => {
+    e.stopPropagation();
+  };
   
   // Don't render if not in writing mode or no selected shape
-  if (action !== "writing" || !selectedShape) return null;
+  if (action !== "writing" || !selectedShape) {
+    return null;
+  }
 
   // Calculate responsive positioning and sizing
   const fontSize = Math.max(12, 24 * scale);
@@ -113,7 +144,10 @@ export const TextEditor = () => {
       ref={textAreaRef}
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
-      className="absolute border-none outline-none resize-none overflow-hidden whitespace-pre-wrap break-words bg-transparent text-foreground focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm z-[1000]"
+      onMouseDown={handleMouseEvents}
+      onClick={handleMouseEvents}
+      onMouseUp={handleMouseEvents}
+      className="absolute outline-none resize-none overflow-hidden whitespace-pre-wrap break-words text-foreground shadow-sm"
       style={{
         top: selectedShape
           ? (selectedShape.y1 - 2) * scale + panOffset.y * scale - scaleOffset.y
@@ -125,9 +159,9 @@ export const TextEditor = () => {
         fontFamily: 'sans-serif',
         width: `${minWidth}px`,
         minHeight: `${minHeight}px`,
-        zIndex: 100,
+        zIndex: 1000,
       }}
-      placeholder="Type your text here..."
+      placeholder=""
       autoFocus
       spellCheck={false}
     />

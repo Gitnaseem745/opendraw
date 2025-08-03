@@ -39,10 +39,25 @@ export const drawShape = (
             }
             break;
         case "text": 
-            ctx.textBaseline = "top";
-            ctx.font = "20px Arial";
-            ctx.fillStyle = shape.strokeColor || "#000000";
-            ctx.fillText(shape.text || "", shape.x1, shape.y1);
+            if (shape.text && shape.text.trim() !== "") {
+                ctx.save();
+                ctx.textBaseline = "top";
+                // Use responsive font size like TextEditor
+                const fontSize = Math.max(16, 24); // Default responsive size
+                ctx.font = `${fontSize}px sans-serif`; // Match TextEditor font family
+                ctx.fillStyle = shape.strokeColor || "#000000";
+                ctx.fillText(shape.text, shape.x1, shape.y1);
+                ctx.restore();
+            } else {
+                // Show placeholder for empty text during editing
+                ctx.save();
+                ctx.textBaseline = "top";
+                const fontSize = Math.max(16, 24);
+                ctx.font = `${fontSize}px sans-serif`;
+                ctx.fillStyle = shape.strokeColor ? `${shape.strokeColor}40` : "#00000040"; // Semi-transparent
+                ctx.fillText("", shape.x1, shape.y1);
+                ctx.restore();
+            }
             break;
     }
 };

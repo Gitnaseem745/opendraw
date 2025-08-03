@@ -117,13 +117,36 @@ export const useCanvasEvents = (canvasRef: React.RefObject<HTMLCanvasElement>) =
         break;
         
       case Tools.text:
-        const canvas = canvasRef.current;
-        if (!canvas) throw new Error("Canvas shape not found");
-        const context = canvas.getContext("2d");
-        if (!context) throw new Error("Could not get 2D context from canvas");
-        if (!options) throw new Error("No text options provided for text tool");
+        const canvas = canvasRef?.current;
+        if (!canvas) {
+          // Fallback when canvas is not available
+          shapesCopy[id] = createShape(
+            { id, x1, y1, x2: x1 + 100, y2: y1 + 24, type }, 
+            shapeStrokeColor, 
+            shapeFillColor, 
+            shapeStrokeWidth, 
+            shapeZIndex
+          );
+          shapesCopy[id].text = options?.text || "";
+          break;
+        }
         
-        const textWidth = context.measureText(options.text).width;
+        const context = canvas.getContext("2d");
+        if (!context) {
+          // Fallback when context is not available
+          shapesCopy[id] = createShape(
+            { id, x1, y1, x2: x1 + 100, y2: y1 + 24, type }, 
+            shapeStrokeColor, 
+            shapeFillColor, 
+            shapeStrokeWidth, 
+            shapeZIndex
+          );
+          shapesCopy[id].text = options?.text || "";
+          break;
+        }
+        
+        const textContent = options?.text || "";
+        const textWidth = textContent ? context.measureText(textContent).width : 100;
         const textHeight = 24;
         
         shapesCopy[id] = {
@@ -134,7 +157,7 @@ export const useCanvasEvents = (canvasRef: React.RefObject<HTMLCanvasElement>) =
             shapeStrokeWidth, 
             shapeZIndex
           ),
-          text: options.text
+          text: textContent
         };
         break;
         
@@ -480,6 +503,7 @@ export const useCanvasEvents = (canvasRef: React.RefObject<HTMLCanvasElement>) =
   
   const handleMouseUp = useCallback((event: MouseEvent<HTMLCanvasElement>) => {
     const { clientX, clientY } = getMouseCoordinates(event);
+    let enteringWritingMode = false;
 
     if (selectedShape) {
       const index = selectedShape.id;
@@ -498,6 +522,7 @@ export const useCanvasEvents = (canvasRef: React.RefObject<HTMLCanvasElement>) =
         clientY - offsetY === selectedShape.y1
       ) {
         setAction("writing");
+        enteringWritingMode = true;
         return;
       }
     }
@@ -518,8 +543,11 @@ export const useCanvasEvents = (canvasRef: React.RefObject<HTMLCanvasElement>) =
       setShapes(shapes, true);
     }
 
-    setAction("none");
-    setSelectedShape(null);
+    // Don't clear selectedShape if we're entering writing mode
+    if (!enteringWritingMode) {
+      setAction("none");
+      setSelectedShape(null);
+    }
   }, [action, selectedShape, shapes, getMouseCoordinates, updateElement, setAction, setSelectedShape, setShapes]);
   
   return { handleMouseDown, handleMouseMove, handleMouseUp };

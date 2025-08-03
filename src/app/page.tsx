@@ -3,6 +3,7 @@ import { DrawingCanvas } from "@/components/Canvas";
 import { TextEditor } from "@/components/TextEditor";
 import { ToolPanel, ShapePropertiesSidebar, MobileToolPanel } from "@/components/Tools";
 import { StatusBar } from "@/components/status";
+import { ShortcutsButton } from "@/components/shared";
 import { useKeyboardShortcuts, useWheelEvents, useMobileOptimization } from "@/hooks";
 
 export default function Home() {
@@ -21,6 +22,7 @@ export default function Home() {
             <StatusBar />
             <TextEditor />
             <DrawingCanvas />
+            <ShortcutsButton />
         </div>
     );
 }

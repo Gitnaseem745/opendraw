@@ -8,3 +8,4 @@
 
 export { ToolButton } from './ToolButton';
 export { ColorPicker } from './ColorPicker';
+export { ShortcutsButton } from './ShortcutsButton';

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Stroke and fill controls component for drawing customization
- * @description Provides stroke color, fill color, and stroke width controls
+ * @description Provides stroke color, fill color, and stroke width controls with minimal sleek UI
  * @since 2025
  * @author Open Draw Team
  * 
@@ -10,21 +10,21 @@
  * ```
  * 
  * @features
- * - Stroke color picker
+ * - Stroke color picker with compact color palette
  * - Fill color picker with transparency option
- * - Stroke width slider
- * - Color presets
- * - Visual feedback
+ * - Stroke width controls with visual preview
+ * - Minimal and sleek design matching toolbar
  */
 
 import { useDrawingStore } from '@/store/drawingStore';
-import { Minus, Plus } from 'lucide-react';
+import { Minus, Plus, X } from 'lucide-react';
+import { ToolButton } from '../shared/ToolButton';
 
 /**
  * Stroke and fill controls component
  * 
- * Provides comprehensive controls for customizing stroke color, fill color,
- * and stroke width with an intuitive interface.
+ * Provides minimal and sleek controls for customizing stroke color, fill color,
+ * and stroke width with an interface that matches the main toolbar design.
  * 
  * @returns {JSX.Element} The rendered stroke controls component
  */
@@ -39,12 +39,11 @@ export const StrokeControls = () => {
   } = useDrawingStore();
 
   /**
-   * Predefined color palette
+   * Compact color palette for stroke and fill
    */
   const colorPalette = [
-    '#000000', '#ffffff', '#ff0000', '#00ff00', '#0000ff',
-    '#ffff00', '#ff00ff', '#00ffff', '#ff8000', '#8000ff',
-    '#ff0080', '#80ff00', '#0080ff', '#808080', '#c0c0c0'
+    '#000000', '#ffffff', '#ff0000', '#00ff00', 
+    '#0000ff', '#ffff00', '#ff00ff', '#00ffff'
   ];
 
   /**
@@ -52,134 +51,121 @@ export const StrokeControls = () => {
    * @param {number} delta - Amount to change stroke width by
    */
   const adjustStrokeWidth = (delta: number) => {
-    setStrokeWidth(strokeWidth + delta);
+    const newWidth = Math.max(1, Math.min(20, strokeWidth + delta));
+    setStrokeWidth(newWidth);
   };
 
   return (
-    <div className="absolute top-20 left-0 flex flex-col gap-3 p-3 bg-background/90 backdrop-blur-sm border border-border rounded-lg shadow-lg">
-      {/* Stroke Color */}
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-medium text-muted-foreground">Stroke</label>
-        <div className="flex items-center gap-2">
-          <input
-            type="color"
-            value={strokeColor}
-            onChange={(e) => setStrokeColor(e.target.value)}
-            className="w-8 h-8 rounded border border-border cursor-pointer"
-            title="Stroke Color"
+    <div className="flex flex-col gap-2">
+      {/* Stroke Color Section */}
+      <div className="flex gap-1 p-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg shadow-lg">
+        <div className="flex items-center gap-1">
+          {/* Current stroke color indicator */}
+          <div 
+            className="w-6 h-6 rounded border border-border cursor-pointer flex-shrink-0"
+            style={{ backgroundColor: strokeColor }}
+            title={`Current stroke: ${strokeColor}`}
           />
-          <div className="flex flex-wrap gap-1">
-            {colorPalette.slice(0, 8).map((color) => (
-              <button
-                key={color}
-                onClick={() => setStrokeColor(color)}
-                className={`w-4 h-4 rounded border cursor-pointer hover:scale-110 transition-transform ${
-                  strokeColor === color ? 'ring-2 ring-ring ring-offset-1' : 'border-border'
-                }`}
-                style={{ backgroundColor: color }}
-                title={`Set stroke to ${color}`}
-                aria-label={`Set stroke color to ${color}`}
-              />
-            ))}
-          </div>
+          {/* Compact color palette */}
+          {colorPalette.map((color) => (
+            <button
+              key={`stroke-${color}`}
+              onClick={() => setStrokeColor(color)}
+              className={`w-5 h-5 rounded border cursor-pointer hover:scale-110 transition-transform ${
+                strokeColor === color ? 'ring-1 ring-ring' : 'border-border/50'
+              }`}
+              style={{ backgroundColor: color }}
+              title={`Set stroke to ${color}`}
+              aria-label={`Set stroke color to ${color}`}
+            />
+          ))}
         </div>
       </div>
 
-      {/* Fill Color */}
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-medium text-muted-foreground">Fill</label>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <input
-              type="color"
-              value={fillColor === 'transparent' ? '#ffffff' : fillColor}
-              onChange={(e) => setFillColor(e.target.value)}
-              disabled={fillColor === 'transparent'}
-              className="w-8 h-8 rounded border border-border cursor-pointer disabled:opacity-50"
-              title="Fill Color"
+      {/* Fill Color Section */}
+      <div className="flex gap-1 p-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg shadow-lg">
+        <div className="flex items-center gap-1">
+          {/* Current fill color indicator or no-fill indicator */}
+          <div className="relative w-6 h-6 rounded border border-border cursor-pointer flex-shrink-0">
+            <div 
+              className="w-full h-full rounded"
+              style={{ 
+                backgroundColor: fillColor === 'transparent' ? 'transparent' : fillColor,
+                backgroundImage: fillColor === 'transparent' 
+                  ? 'linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)'
+                  : 'none',
+                backgroundSize: fillColor === 'transparent' ? '4px 4px' : 'auto',
+                backgroundPosition: fillColor === 'transparent' ? '0 0, 0 2px, 2px -2px, -2px 0px' : 'auto'
+              }}
+              title={fillColor === 'transparent' ? 'No fill' : `Current fill: ${fillColor}`}
             />
             {fillColor === 'transparent' && (
-              <div className="absolute inset-0 flex items-center justify-center text-xs text-red-500 font-bold pointer-events-none">
-                ✕
-              </div>
+              <X size={12} className="absolute inset-0 m-auto text-red-500" />
             )}
           </div>
-          <button
+          
+          {/* No fill button */}
+          <ToolButton
+            isActive={fillColor === 'transparent'}
             onClick={() => setFillColor('transparent')}
-            className={`w-8 h-8 rounded border cursor-pointer flex items-center justify-center text-xs font-bold transition-all ${
-              fillColor === 'transparent' 
-                ? 'bg-muted border-ring ring-2 ring-ring ring-offset-1' 
-                : 'border-border hover:bg-muted'
-            }`}
-            title="No Fill"
-            aria-label="Set no fill"
+            label="No Fill"
           >
-            ✕
-          </button>
-          <div className="flex flex-wrap gap-1">
-            {colorPalette.slice(0, 6).map((color) => (
-              <button
-                key={color}
-                onClick={() => setFillColor(color)}
-                className={`w-4 h-4 rounded border cursor-pointer hover:scale-110 transition-transform ${
-                  fillColor === color ? 'ring-2 ring-ring ring-offset-1' : 'border-border'
-                }`}
-                style={{ backgroundColor: color }}
-                title={`Set fill to ${color}`}
-                aria-label={`Set fill color to ${color}`}
-              />
-            ))}
-          </div>
+            <X size={16} />
+          </ToolButton>
+          
+          {/* Compact color palette */}
+          {colorPalette.slice(0, 6).map((color) => (
+            <button
+              key={`fill-${color}`}
+              onClick={() => setFillColor(color)}
+              className={`w-5 h-5 rounded border cursor-pointer hover:scale-110 transition-transform ${
+                fillColor === color ? 'ring-1 ring-ring' : 'border-border/50'
+              }`}
+              style={{ backgroundColor: color }}
+              title={`Set fill to ${color}`}
+              aria-label={`Set fill color to ${color}`}
+            />
+          ))}
         </div>
       </div>
 
-      {/* Stroke Width */}
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-medium text-muted-foreground">Width</label>
-        <div className="flex items-center gap-2">
-          <button
+      {/* Stroke Width Section */}
+      <div className="flex gap-1 p-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg shadow-lg">
+        <div className="flex items-center gap-1">
+          <ToolButton
+            isActive={false}
             onClick={() => adjustStrokeWidth(-1)}
             disabled={strokeWidth <= 1}
-            className="w-6 h-6 rounded border border-border bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-            title="Decrease stroke width"
-            aria-label="Decrease stroke width"
+            label="Decrease width"
           >
-            <Minus size={12} />
-          </button>
-          <div className="flex items-center gap-2 min-w-0 flex-1">
-            <input
-              type="range"
-              min="1"
-              max="20"
-              value={strokeWidth}
-              onChange={(e) => setStrokeWidth(Number(e.target.value))}
-              className="flex-1 h-2 bg-muted rounded-lg appearance-none cursor-pointer"
-              title={`Stroke width: ${strokeWidth}px`}
+            <Minus size={16} />
+          </ToolButton>
+          
+          {/* Width preview */}
+          <div className="flex items-center justify-center w-8 h-8 bg-muted/50 rounded border border-border">
+            <div 
+              className="rounded-full bg-foreground"
+              style={{ 
+                width: `${Math.max(Math.min(strokeWidth * 2, 16), 2)}px`, 
+                height: `${Math.max(Math.min(strokeWidth * 2, 16), 2)}px` 
+              }}
+              title={`Width: ${strokeWidth}px`}
             />
-            <span className="text-xs font-mono min-w-[2rem] text-center">
-              {strokeWidth}px
-            </span>
           </div>
-          <button
+          
+          <ToolButton
+            isActive={false}
             onClick={() => adjustStrokeWidth(1)}
             disabled={strokeWidth >= 20}
-            className="w-6 h-6 rounded border border-border bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-            title="Increase stroke width"
-            aria-label="Increase stroke width"
+            label="Increase width"
           >
-            <Plus size={12} />
-          </button>
-        </div>
-        {/* Stroke Width Preview */}
-        <div className="flex justify-center">
-          <div 
-            className="rounded-full bg-foreground"
-            style={{ 
-              width: `${Math.max(strokeWidth, 2)}px`, 
-              height: `${Math.max(strokeWidth, 2)}px` 
-            }}
-            title={`Stroke width preview: ${strokeWidth}px`}
-          />
+            <Plus size={16} />
+          </ToolButton>
+          
+          {/* Width value indicator */}
+          <div className="px-2 py-1 bg-muted/50 rounded border border-border text-xs font-mono min-w-[2.5rem] text-center">
+            {strokeWidth}
+          </div>
         </div>
       </div>
     </div>

@@ -28,7 +28,7 @@ export const createShape = ({
         strokeWidth: strokeWidth,
         roughness: 1.1,
         bowing: 0.5,
-        strokeLineDash: [5, 10]
+        // strokeLineDash: [5, 10]
     };
 
     switch (type) {

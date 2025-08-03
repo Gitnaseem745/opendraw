@@ -24,6 +24,7 @@ import { ToolButton } from '../shared/ToolButton';
 import { UndoRedoButtons } from './UndoRedoButtons';
 import { ViewControls } from './ViewControls';
 import { ObjectControls } from './ObjectControls';
+import { StrokeControls } from './StrokeControls';
 import { ArrowRight, Circle, Diamond, Eraser, Hand, Lock, Minus, MousePointer2, Pencil, Square, Triangle, TypeOutline } from 'lucide-react';
 import ExportPanel from './ExportPanel';
 
@@ -72,7 +73,7 @@ export const ToolPanel = () => {
                 </ToolButton>
             ))}
         </div>
-      
+
         {/* Action Controls */}
         <div className="flex gap-2 justify-center">
             <div className="flex gap-1 p-2 items-center bg-background/80 backdrop-blur-sm border border-border rounded-lg shadow-lg">
@@ -85,6 +86,9 @@ export const ToolPanel = () => {
       
         {/* Object Controls */}
         <ObjectControls />
+
+         {/* Stroke Controls */}
+        <StrokeControls />
 
         {/* Export Panel */}
         <ExportPanel />
